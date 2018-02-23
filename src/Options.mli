@@ -169,6 +169,13 @@ assert (Some 42 |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 43);
 Option.catch read_line |> Option.or_else (fun () -> "nothing")
 ]} *)
 
+  (* val dump : (Format.formatter -> 'a -> unit) -> 'a option *)
+  (*   -> Format.formatter -> 'a option -> unit *)
+  (** Pretty-printer for the option value that dumpped . *)
+
+  val hash : ('a -> int) -> 'a option -> int
+  (** Produces a hash for the option value. *)
+
 
   (** {2:option_conversions Conversions} *)
 

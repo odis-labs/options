@@ -78,7 +78,25 @@ module Option = struct
     | Some _ -> true
     | None -> false
 
-  include Equal1.Make(struct
+  let default = None
+
+  let empty = None
+
+  let hash item_hash self =
+    match self with
+    | None -> 42
+    | Some x -> Hashtbl.seeded_hash 43 (item_hash x)
+
+  (* let dump pp1 fmt self = *)
+  (*   match self with *)
+  (*   | None   -> *)
+  (*     Format.pp_print_string fmt "None" *)
+  (*   | Some x -> *)
+  (*     Format.pp_print_string fmt "(Some "; *)
+  (*     (pp1 fmt) x; *)
+  (*     Format.pp_print_string fmt ")" *)
+
+  include Equal1.Extend(struct
       type nonrec 'a t = 'a t
 
       let equal eq_a t1 t2 =
@@ -88,7 +106,7 @@ module Option = struct
         | _ -> false
     end)
 
-  include Ordered1.Make(struct
+  include Ordered1.Extend(struct
       type nonrec 'a t = 'a t
 
       let compare cmp_a t1 t2 =
@@ -129,31 +147,9 @@ module Option = struct
   module Functor_instance = Monad.To_functor(Monad_instance)
   module Applicative_instance = Monad.To_applicative(Monad_instance)
 
-  include Monad.Extension(Monad_instance)
-  include Functor.Extension(Functor_instance)
-  include Applicative.Extension(Applicative_instance)
-
-
-  (* Default1 *)
-  (* let default = None *)
-
-  (* Hashable1 *)
-  (* let hash _ self = *)
-  (*   Hashtbl.hash self *)
-
-  (* Printable1 *)
-  (* include Printable1.Make(struct *)
-  (*     type nonrec 'a t = 'a t *)
-
-  (*     let pp pp1 fmt self = *)
-  (*       match self with *)
-  (*       | None   -> *)
-  (*         Format.pp_print_string fmt "None" *)
-  (*       | Some x -> *)
-  (*         Format.pp_print_string fmt "(Some "; *)
-  (*         (pp1 fmt) x; *)
-  (*         Format.pp_print_string fmt ")" *)
-  (*   end) *)
+  include Monad.Extend(Monad_instance)
+  include Functor.Extend(Functor_instance)
+  include Applicative.Extend(Applicative_instance)
 end
 
 include Option.Export
