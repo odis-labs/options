@@ -1,15 +1,15 @@
-# Ordering (Unreleased)
+# Options (Unreleased)
 
-Interfaces, modules and operations for ordering and comparison of OCaml values.
+A type that represents either a wrapped value or none, the absence of a value.
 
-- *Homepage*: <http://odis.io/ordering>
+- *Homepage*: <http://odis.io/doc/options>
 
 
 ## Installation
 
 iter can be installed with `opam`:
 
-    opam install ordering
+    opam install options
 
 If you don't use `opam` consult the [`opam`](opam) file for build
 instructions.
@@ -18,7 +18,7 @@ instructions.
 ## Documentation
 
 The documentation and API reference is generated from the source interfaces. It
-can be consulted [online][http://odis.io/ordering/Ordering] or via `odig doc ordering`.
+can be consulted [online][http://odis.io/doc/options] or via `odig doc ordering`.
 
 
 ## License
