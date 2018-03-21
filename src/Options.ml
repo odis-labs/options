@@ -1,4 +1,4 @@
-open Compare
+open Order
 open Control
 
 type nonrec 'a option = 'a option =
@@ -111,9 +111,9 @@ module Option = struct
 
       let compare cmp_a t1 t2 =
         match t1, t2 with
-        | None, None -> Equal
-        | None, Some _ -> Less
-        | Some _, None -> Greater
+        | None, None -> `Equal
+        | None, Some _ -> `Less
+        | Some _, None -> `Greater
         | Some a1, Some a2 -> cmp_a a1 a2
     end)
 
