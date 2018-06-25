@@ -20,13 +20,13 @@ open Control
     value. *)
 
 
-(** {1:overview Overview}
+(** {2:overview Overview}
 
     Option types provide a safe way to deal with potentially absent values. In
     most imperative languages this is achieved with a {i null pointer}. Continue... *)
 
 
-(** {1:option_type Option Type} *)
+(** {2:option_type Option Type} *)
 
 (** Optional values of type ['a].
 
@@ -61,9 +61,9 @@ module Option : sig
         for partial application.
 
         {3 Examples}
-{[
-assert (List.map some [1; 2; 3] = [Some 1; Some 2; Some 3])
-]} *)
+        {[
+        assert (List.map some [1; 2; 3] = [Some 1; Some 2; Some 3])
+        ]} *)
 
     val none : 'a option
     (** [none] is the [None] constructor. Not very useful but included for
@@ -80,26 +80,26 @@ assert (List.map some [1; 2; 3] = [Some 1; Some 2; Some 3])
         in [option] or does nothing if [option] contains no value.
 
         {3 Examples}
-{[
-Some "Hello, world!" |> if_some print_endline
-(* Output: Hello, World! *)
+        {[
+        Some "Hello, world!" |> if_some print_endline
+        (* Output: Hello, World! *)
 
-None |> if_some print
-(* No output *)
-]} *)
+        None |> if_some print
+        (* No output *)
+        ]} *)
 
     val if_none : (unit -> unit) -> 'a option -> unit
     (** [if_none f option] calls an effectful function [f] if [option] is a
         [None] value or does nothing otherwise.
 
         {3 Examples}
-{[
-None |> if_none (fun () -> print_endline "no value")
-(* Output: no value *)
+        {[
+        None |> if_none (fun () -> print_endline "no value")
+        (* Output: no value *)
 
-Some 42 |> if_none (fun () -> print_endline "no value")
-(* No output *)
-]} *)
+        Some 42 |> if_none (fun () -> print_endline "no value")
+        (* No output *)
+        ]} *)
 
     val or_else : (unit -> 'a) -> 'a option -> 'a
     (** [or_else f opt] extracts the optional value. If the optional is
@@ -110,13 +110,13 @@ Some 42 |> if_none (fun () -> print_endline "no value")
         {b See also:} {{: #val-or} [Option.(or)]}
 
         {3 Examples}
-{[
-assert (Some 1 |> Option.or_else (fun () -> 0) = 1);
-assert (None |> Option.or_else (fun () -> 0) = 0);
+        {[
+        assert (Some 1 |> Option.or_else (fun () -> 0) = 1);
+        assert (None |> Option.or_else (fun () -> 0) = 0);
 
-(* [read_line] will not be called in the following example. *)
-assert (Some "Bob" |> Option.or_else read_line = "Bob");
-]} *)
+        (* [read_line] will not be called in the following example. *)
+        assert (Some "Bob" |> Option.or_else read_line = "Bob");
+        ]} *)
 
     val ( or ) : 'a option -> 'a -> 'a
     (** Unwrap the option {i or} use a default value.
@@ -126,20 +126,21 @@ assert (Some "Bob" |> Option.or_else read_line = "Bob");
         value will be always evaluated, for lazy evaluation use
         [Option.or_else].
 
-        {b Note:} this operator has a very low precedence, {i e.g.} [option or
-        0 + 1] is evaluated as [option or (0 + 1)] and {i not} as [(option or 0) +
-        1]. Complex expressions should be grouped explicitly to avoid ambiguity.
+        {b Note:} this operator has a very low precedence, {i e.g.}
+        [option or 0 + 1] is evaluated as [option or (0 + 1)] and {i not} as
+        [(option or 0) + 1]. Complex expressions should be grouped explicitly
+        to avoid ambiguity.
 
         {b See also:} {{: #val-or_else} [Option.or_else]}
 
         {3 Examples}
-{[
-assert ((None or 0) = 0);
-assert ((None or 1 + 2) = 3);
-assert ((Some 1 or 0) = 1);
-assert ((Some 1 or 1 + 2) = 4);
-assert (((Some 1 or 1) + 2) = 3);
-]} *)
+        {[
+        assert ((None or 0) = 0);
+        assert ((None or 1 + 2) = 3);
+        assert ((Some 1 or 0) = 1);
+        assert ((Some 1 or 1 + 2) = 4);
+        assert (((Some 1 or 1) + 2) = 3);
+        ]} *)
   end
 
   (** {2:public_exports Public Exports} *)
@@ -152,10 +153,10 @@ assert (((Some 1 or 1) + 2) = 3);
       wrapped by [option], or [none ()] if [option] has no value.
 
       {3 Examples}
-{[
-assert (None    |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 0);
-assert (Some 42 |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 43);
-]} *)
+      {[
+      assert (None    |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 0);
+      assert (Some 42 |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 43);
+      ]} *)
 
   val is_empty : 'a option -> bool
   (** [is_empty opt] is [true] if the option is [None] and [false] otherwise. *)
@@ -165,9 +166,9 @@ assert (Some 42 |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 43);
       exception or its return value as [Some] otherwise.
 
       {3 Examples}
-{[
-Option.catch read_line |> Option.or_else (fun () -> "nothing")
-]} *)
+      {[
+      Option.catch read_line |> Option.or_else (fun () -> "nothing")
+      ]} *)
 
   (* val dump : (Format.formatter -> 'a -> unit) -> 'a option *)
   (*   -> Format.formatter -> 'a option -> unit *)
@@ -183,19 +184,19 @@ Option.catch read_line |> Option.or_else (fun () -> "nothing")
   (** [to_bool self] is an alis for {!is_some}.
 
       {3 Examples}
-{[
-assert (Option.to_bool (Some 42) = true);
-assert (Option.to_bool None = false);
-]} *)
+      {[
+      assert (Option.to_bool (Some 42) = true);
+      assert (Option.to_bool None = false);
+      ]} *)
 
   val to_list : 'a option -> 'a list
   (** [to_list self] is a singleton list with the value wrapped by [self] or an empty list if [self] is [None].
 
       {3 Examples}
-{[
-assert (Option.to_bool (Some 42) = true);
-assert (Option.to_bool None = false);
-]} *)
+      {[
+      assert (Option.to_bool (Some 42) = true);
+      assert (Option.to_bool None = false);
+      ]} *)
 
   val to_result : error: 'b -> 'a option -> ('a, 'b) result
   (** [to_result ~error t] converts an option value into a result. If the
@@ -203,10 +204,10 @@ assert (Option.to_bool None = false);
       result case.
 
       {3 Examples}
-{[
-assert (Option.to_result (Some 42) = Ok 42);
-assert (Option.to_result ~error:"No" None = Error "No");
-]} *)
+      {[
+      assert (Option.to_result (Some 42) = Ok 42);
+      assert (Option.to_result ~error:"No" None = Error "No");
+      ]} *)
 
 
   (* Functor *)
@@ -217,10 +218,10 @@ assert (Option.to_result ~error:"No" None = Error "No");
 
       {3 Examples}
 
-{[
-assert (List.reverse <@> Some [1; 2; 3] == Some [3; 2; 1]);
-assert (Int.to_string <@> None == None);
-]} *)
+      {[
+      assert (List.reverse <@> Some [1; 2; 3] == Some [3; 2; 1]);
+      assert (Int.to_string <@> None == None);
+      ]} *)
 
 
   (** {2:implemented_interfaces Implemented Interfaces} *)
@@ -242,27 +243,28 @@ assert (Int.to_string <@> None == None);
   val force : 'a option -> 'a
   (** Forces the extraction the optional value.
 
-      @raise No_value if [option] is [None].
-
       {3 Examples}
-{[
-assert (Option.force (List.head [1; 2; 3]) = 1);
-assert (raises (Option.force (List.head [])))
-]} *)
+      {[
+      assert (Option.force (List.head [1; 2; 3]) = 1);
+      assert (raises (Option.force (List.head [])))
+      ]}
+
+      @raise No_value if [option] is [None]. *)
 
   val or_fail : string -> 'a option -> 'a
   (** [or_fail message option] forces the extraction of the optional value and
       fails with [message] if [option] does not contain a value.
 
-      @raise Failure if [self] is [None].
+      {3 Examples}
 
-      {3 Examples:}
-{[
-assert (List.head [1; 2; 3] |> Option.or_fail "empty list" = 1);
-]} *)
+      {[
+      assert (List.head [1; 2; 3] |> Option.or_fail "empty list" = 1);
+      ]}
+
+      @raise Failure if [self] is [None]. *)
 end
 
-(** {1:public_exports Public Definitions}
+(** {2:public_exports Public Definitions}
 
     These are the public definitions that will be exported when the top-level
     [Options] module is open. *)
