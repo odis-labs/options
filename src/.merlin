@@ -1,0 +1,10 @@
+EXCLUDE_QUERY_DIR
+B /Users/rizo/.opam/4.09.0+flambda/lib/control
+B /Users/rizo/.opam/4.09.0+flambda/lib/order
+B /Users/rizo/.opam/4.09.0+flambda/lib/result
+B ../_build/default/src/.Options.objs/byte
+S /Users/rizo/.opam/4.09.0+flambda/lib/control
+S /Users/rizo/.opam/4.09.0+flambda/lib/order
+S /Users/rizo/.opam/4.09.0+flambda/lib/result
+S .
+FLG -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs

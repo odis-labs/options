@@ -1,24 +1,24 @@
 opam-version: "1.2"
 maintainer: "Rizo Isrof <rizo@odis.io>"
 authors: ["Rizo Isrof <rizo@odis.io>"]
-homepage: "http://rizo.github.io/options"
-doc: "http://rizo.github.io/options/doc"
+homepage: "http://odis-labs.github.io/options"
+doc: "http://odis-labs.github.io/options"
 license: "ISC"
-dev-repo: "https://github.com/rizo/options.git"
-bug-reports: "https://github.com/rizo/options/issues"
+dev-repo: "https://github.com/odis-labs/options.git"
+bug-reports: "https://github.com/odis-labs/options/issues"
 
-descr: "Optional values and operations"
-tags: ["org:rizo" "option"]
+synopsis: "Operations for optional values."
+tags: ["org:odis" "option"]
 
 available: [ ocaml-version >= "4.01.0"]
 
 depends: [
-  "jbuilder" {build}
+  "dune" {build & >= "1.0"}
   "order"
   "control"
 ]
 
 build: [
-  [ "jbuilder" "build" "-p" name "-j" jobs "@install" ]
+  [ "dune" "build" "-p" name "-j" jobs ]
 ]
 

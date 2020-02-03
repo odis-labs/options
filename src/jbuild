@@ -1,9 +1,0 @@
-(jbuild_version 1)
-
-(library
- ((name Options)
-  (public_name options)
-  (modules (Options))
-  (wrapped false)
-  (libraries (order control))))
-

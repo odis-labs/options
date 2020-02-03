@@ -16,27 +16,24 @@ open Order
 open Control
 
 
-(** A type that represents either a wrapped value or none, the absence of a
-    value. *)
+(** A type that represents either a wrapped generic value or no value.
 
-
-(** {2:overview Overview}
-
-    Option types provide a safe way to deal with potentially absent values. In
-    most imperative languages this is achieved with a {i null pointer}. Continue... *)
+    Option types provide a safe way to deal with potentially absent values. *)
 
 
 (** {2:option_type Option Type} *)
 
-(** Optional values of type ['a].
+(** A type for generic optional values.
 
-    This type represents an optional value: it is either [Some] and contains a
-    value, or [None], and does not.
+    This type represents an optional value: it is either [Some x] and contains
+    the value [x], or [None], and does not contain any value. The complementary
+    {!Option} module includes operations on options.
 
-    The complementary {!Option} module includes operations on [option] values. *)
+    {e Note:} This is an alias for the builtin [option] type included here for
+    documentation. *)
 type nonrec 'a option = 'a option =
   | None        (** No value. *)
-  | Some of 'a  (** A value of type 'a. *)
+  | Some of 'a  (** Some generic value. *)
 
 
 (** Module with operations for the {!type:option} type.
@@ -48,13 +45,13 @@ type nonrec 'a option = 'a option =
 module Option : sig
 
   (** Optional values of type ['a]. *)
-  type 'a t = 'a option =
+  type nonrec 'a t = 'a option =
     | None        (** No value. *)
-    | Some of 'a  (** A value of type 'a. *)
+    | Some of 'a  (** Some generic value. *)
 
   (** Module exports suitable for [open]ing. *)
-  module type Export = sig
-    val some : 'a -> 'a option
+  module Prelude : sig
+    val some : 'a -> 'a t
     (** Produces an option containing a given value.
 
         [some x] wraps [x] with the [Some] constructor. This function is useful
@@ -65,17 +62,17 @@ module Option : sig
         assert (List.map some [1; 2; 3] = [Some 1; Some 2; Some 3])
         ]} *)
 
-    val none : 'a option
+    val none : 'a t
     (** [none] is the [None] constructor. Not very useful but included for
         consistency with {!val:some}. *)
 
-    val is_some : 'a option -> bool
+    val is_some : 'a t -> bool
     (** [is_some option] is [true] if [option] is a [Some] value. *)
 
-    val is_none : 'a option -> bool
+    val is_none : 'a t -> bool
     (** [is_none option] is [true] if [option] is a [None] value. *)
 
-    val if_some : ('a -> unit) -> 'a option -> unit
+    val if_some : ('a -> unit) -> 'a t -> unit
     (** [if_some f option] applies an effectful function [f] to the value wrapped
         in [option] or does nothing if [option] contains no value.
 
@@ -88,7 +85,7 @@ module Option : sig
         (* No output *)
         ]} *)
 
-    val if_none : (unit -> unit) -> 'a option -> unit
+    val if_none : (unit -> unit) -> 'a t -> unit
     (** [if_none f option] calls an effectful function [f] if [option] is a
         [None] value or does nothing otherwise.
 
@@ -101,7 +98,7 @@ module Option : sig
         (* No output *)
         ]} *)
 
-    val or_else : (unit -> 'a) -> 'a option -> 'a
+    val or_else : (unit -> 'a) -> 'a t -> 'a
     (** [or_else f opt] extracts the optional value. If the optional is
         [None], the default value [f ()] is returned. A thunk is used instead of
         a direct value to avoid the default value evaluation when the option is
@@ -118,7 +115,7 @@ module Option : sig
         assert (Some "Bob" |> Option.or_else read_line = "Bob");
         ]} *)
 
-    val ( or ) : 'a option -> 'a -> 'a
+    val ( or ) : 'a t -> 'a -> 'a
     (** Unwrap the option {i or} use a default value.
 
         [option or default] is the flipped infix version of [Option.or_else]
@@ -144,9 +141,10 @@ module Option : sig
   end
 
   (** {2:public_exports Public Exports} *)
-  include Export
+  include module type of Prelude
+  (** @inline *)
 
-  val case : some: ('a -> 'b) -> none: (unit -> 'b) -> 'a option -> 'b
+  val case : some: ('a -> 'b) -> none: (unit -> 'b) -> 'a t -> 'b
   (** Pattern-matching on option values with functions.
 
       [case ~none ~some option] is the function [some] applied to the value
@@ -158,15 +156,16 @@ module Option : sig
       assert (Some 42 |> Option.case ~some:((+) 1) ~none:(fun () -> 0) = 43);
       ]} *)
 
-  val is_empty : 'a option -> bool
+  val is_empty : 'a t -> bool
   (** [is_empty opt] is [true] if the option is [None] and [false] otherwise. *)
 
-  val catch : (unit -> 'a) -> 'a option
+  val catch : (unit -> 'a) -> 'a t
   (** [catch f] wraps the call to [f], returning [None] if it raises an
       exception or its return value as [Some] otherwise.
 
       {3 Examples}
       {[
+      (* read_line may raise End_of_file. *)
       Option.catch read_line |> Option.or_else (fun () -> "nothing")
       ]} *)
 
@@ -174,13 +173,13 @@ module Option : sig
   (*   -> Format.formatter -> 'a option -> unit *)
   (** Pretty-printer for the option value that dumpped . *)
 
-  val hash : ('a -> int) -> 'a option -> int
+  val hash : ('a -> int) -> 'a t -> int
   (** Produces a hash for the option value. *)
 
 
   (** {2:option_conversions Conversions} *)
 
-  val to_bool : 'a option -> bool
+  val to_bool : 'a t -> bool
   (** [to_bool self] is an alis for {!is_some}.
 
       {3 Examples}
@@ -189,7 +188,7 @@ module Option : sig
       assert (Option.to_bool None = false);
       ]} *)
 
-  val to_list : 'a option -> 'a list
+  val to_list : 'a t -> 'a list
   (** [to_list self] is a singleton list with the value wrapped by [self] or an empty list if [self] is [None].
 
       {3 Examples}
@@ -198,20 +197,29 @@ module Option : sig
       assert (Option.to_bool None = false);
       ]} *)
 
-  val to_result : error: 'b -> 'a option -> ('a, 'b) result
+  val to_result : error: 'b -> 'a t -> ('a, 'b) result
   (** [to_result ~error t] converts an option value into a result. If the
       option value is [None], the [error] value will be used for the [Error]
       result case.
 
       {3 Examples}
       {[
-      assert (Option.to_result (Some 42) = Ok 42);
+      assert (Option.to_result ~error:(Some 42) = Ok 42);
       assert (Option.to_result ~error:"No" None = Error "No");
       ]} *)
 
 
+  (** {2:implemented_interfaces Implemented Interfaces} *)
+
+  include Ordered1.Extension    with type 'a t := 'a t
+  include Equal1.Extension      with type 'a t := 'a t
+  include Monad.Extension       with type 'a t := 'a t
+  include Functor.Extension     with type 'a t := 'a t
+  include Applicative.Extension with type 'a t := 'a t
+
+
   (* Functor *)
-  val ( <@> ) : ('a -> 'b) -> 'a option ->  'b option
+  val ( <@> ) : ('a -> 'b) -> 'a t ->  'b t
   (** [f <@> self] will apply [f] to the value wrapped by [self], returning an
       option with the resulting value, or [None] if [self] does not not have any
       value. This operator is an infix version of [map].
@@ -224,15 +232,6 @@ module Option : sig
       ]} *)
 
 
-  (** {2:implemented_interfaces Implemented Interfaces} *)
-
-  include Ordered1.Extension    with type 'a t := 'a option
-  include Equal1.Extension      with type 'a t := 'a option
-  include Monad.Extension       with type 'a t := 'a option
-  include Functor.Extension     with type 'a t := 'a option
-  include Applicative.Extension with type 'a t := 'a option
-
-
   (** {2:options_unsafe_operations Unsafe Operations}
 
       This section includes the operations that may raise exceptions. *)
@@ -240,7 +239,7 @@ module Option : sig
   exception No_value
   (** Exception raised when forcing a [None] option value. *)
 
-  val force : 'a option -> 'a
+  val force : 'a t -> 'a
   (** Forces the extraction the optional value.
 
       {3 Examples}
@@ -251,7 +250,7 @@ module Option : sig
 
       @raise No_value if [option] is [None]. *)
 
-  val or_fail : string -> 'a option -> 'a
+  val or_fail : string -> 'a t -> 'a
   (** [or_fail message option] forces the extraction of the optional value and
       fails with [message] if [option] does not contain a value.
 
@@ -268,5 +267,6 @@ end
 
     These are the public definitions that will be exported when the top-level
     [Options] module is open. *)
-include Option.Export
+include module type of Option.Prelude
+(** @inline *)
 

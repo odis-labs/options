@@ -6,7 +6,9 @@ type nonrec 'a option = 'a option =
   | Some of 'a
 
 module Option = struct
-  type 'a t = 'a option = None | Some of 'a
+  type nonrec 'a t = 'a option =
+    | None
+    | Some of 'a
 
   exception No_value
 
@@ -15,18 +17,7 @@ module Option = struct
     | Some x -> some x
     | None   -> none ()
 
-  module type Export = sig
-    val some : 'a -> 'a t
-    val none : 'a t
-    val is_some : 'a t -> bool
-    val is_none : 'a t -> bool
-    val if_some : ('a -> unit) -> 'a t -> unit
-    val if_none : (unit -> unit) -> 'a t -> unit
-    val or_else : (unit -> 'a) -> 'a t -> 'a
-    val ( or ) : 'a t -> 'a -> 'a
-  end
-
-  module Export = struct
+  module Prelude = struct
     let some x = Some x
     let none   = None
 
@@ -54,7 +45,7 @@ module Option = struct
       | Some _ -> ()
   end
 
-  include Export
+  include Prelude
 
   let is_empty = is_none
 
@@ -77,10 +68,6 @@ module Option = struct
     match self with
     | Some _ -> true
     | None -> false
-
-  let default = None
-
-  let empty = None
 
   let hash item_hash self =
     match self with
@@ -134,7 +121,7 @@ module Option = struct
   (* Monad *)
 
   module Monad_instance = struct
-    type 'a t = 'a option
+    type nonrec 'a t = 'a t
 
     let return x = Some x
 
@@ -152,5 +139,5 @@ module Option = struct
   include Applicative.Extend(Applicative_instance)
 end
 
-include Option.Export
+include Option.Prelude
 
