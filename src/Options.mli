@@ -205,13 +205,17 @@ module Option : sig
       assert (Option.to_result ~error:"No" None = Error "No");
       ]} *)
 
+
   (** {2 Comparison and equality} *)
+
   val compare : ('a -> 'a -> [ `Less | `Equal | `Greater ])
     -> 'a t -> 'a t -> [ `Less | `Equal | `Greater ]
   (** Comparison for option values. See {!val:Compat.compare} for the
       integer-based implementation. *)
 
   val equal : ('a -> 'a -> bool) -> 'a t -> 'a t -> bool
+  (** Checks if two option values are equal. *)
+
 
   (** {2 Monad instance} *)
 

@@ -38,10 +38,9 @@ html {
 }
 
 body {
-  font-family: "Fira Sans", Helvetica, Arial, sans-serif;
+	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
   text-align: left;
   color: #333;
-  background: #FFFFFF;
 }
 
 .content {
@@ -50,16 +49,11 @@ body {
   margin-right: 4ex;
   margin-top: 20px;
   margin-bottom: 50px;
-  font-family: "Noticia Text", Georgia, serif;
   line-height: 1.5;
 }
 
 .content>header {
   margin-bottom: 30px;
-}
-
-.content>header nav {
-  font-family: "Fira Sans", Helvetica, Arial, sans-serif;
 }
 
 /* Basic markup elements */
@@ -133,7 +127,7 @@ a {
 }
 
 a:hover {
-  box-shadow: 0 1px 0 0 #2C5CBD;
+  text-decoration: underline;
 }
 
 /* Linked highlight */
@@ -334,18 +328,20 @@ section+section, section > header + dl {
   margin: 0;
   font-style: italic;
 }
-
+.spec.value code {
+  display: inline-block;
+}
 .spec.value code .label {
   font-style: italic;
-  font-weight: 400;
-}
-.spec.value code {
-  text-indent: 3em;
-}
-.spec code > span.arg {
-  display: block;
+  font-weight: 500;
 }
 
+.arg:nth-child(2):nth-last-child(n + 5),
+.arg:nth-child(2):nth-last-child(n + 5) ~ .arg,
+.arg:nth-child(2):nth-last-child(n + 5) ~ span:last-child {
+  display: block;
+  margin-left: 1.2em;
+}
 
 div.def {
   margin-top: 0;
