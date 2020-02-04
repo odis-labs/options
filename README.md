@@ -18,7 +18,7 @@ instructions.
 ## Documentation
 
 The documentation and API reference is generated from the source interfaces. It
-can be consulted [online][http://odis.io/doc/options] or via `odig doc ordering`.
+can be consulted [online](https://odis-labs.github.io/options) or via `odig doc order`.
 
 
 ## License
