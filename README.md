@@ -1,4 +1,4 @@
-# Options (Unreleased)
+# Options
 
 A type that represents either a wrapped value or none, the absence of a value.
 
