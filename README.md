@@ -2,7 +2,7 @@
 
 A type that represents either a wrapped value or none, the absence of a value.
 
-- *Homepage*: <http://odis.io/doc/options>
+- [**API reference**](https://odis-labs.github.io/options/options/index.html)
 
 
 ## Installation
