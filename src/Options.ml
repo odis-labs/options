@@ -1,5 +1,3 @@
-open Order
-open Control
 
 type nonrec 'a option = 'a option =
   | None
@@ -83,26 +81,27 @@ module Option = struct
   (*     (pp1 fmt) x; *)
   (*     Format.pp_print_string fmt ")" *)
 
-  include Equal1.Extend(struct
-      type nonrec 'a t = 'a t
+  let equal eq_a t1 t2 =
+    match t1, t2 with
+    | None, None   -> true
+    | Some a1, Some a2 -> eq_a a1 a2
+    | _ -> false
 
-      let equal eq_a t1 t2 =
-        match t1, t2 with
-        | None, None   -> true
-        | Some a1, Some a2 -> eq_a a1 a2
-        | _ -> false
-    end)
+  let compare cmp_a t1 t2 =
+    match t1, t2 with
+    | None, None -> `Equal
+    | None, Some _ -> `Less
+    | Some _, None -> `Greater
+    | Some a1, Some a2 -> cmp_a a1 a2
 
-  include Ordered1.Extend(struct
-      type nonrec 'a t = 'a t
-
-      let compare cmp_a t1 t2 =
-        match t1, t2 with
-        | None, None -> `Equal
-        | None, Some _ -> `Less
-        | Some _, None -> `Greater
-        | Some a1, Some a2 -> cmp_a a1 a2
-    end)
+  module Compat = struct
+    let compare cmp_a t1 t2 =
+      match t1, t2 with
+      | None, None -> 0
+      | None, Some _ -> -1
+      | Some _, None -> 1
+      | Some a1, Some a2 -> cmp_a a1 a2
+  end
 
 
   (* Unsafe *)
@@ -120,23 +119,19 @@ module Option = struct
 
   (* Monad *)
 
-  module Monad_instance = struct
-    type nonrec 'a t = 'a t
+  let return x = Some x
 
-    let return x = Some x
+  let bind f self =
+    match self with
+    | Some x -> f x
+    | None -> None
 
-    let bind f self =
-      match self with
-      | Some x -> f x
-      | None -> None
-  end
+  let map f self =
+    match self with
+    | Some x -> Some (f x)
+    | None -> None
 
-  module Functor_instance = Monad.To_functor(Monad_instance)
-  module Applicative_instance = Monad.To_applicative(Monad_instance)
-
-  include Monad.Extend(Monad_instance)
-  include Functor.Extend(Functor_instance)
-  include Applicative.Extend(Applicative_instance)
+  let (<@>) = map
 end
 
 include Option.Prelude

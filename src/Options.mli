@@ -12,9 +12,6 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. *)
 
-open Order
-open Control
-
 
 (** A type that represents either a wrapped generic value or no value.
 
@@ -208,27 +205,36 @@ module Option : sig
       assert (Option.to_result ~error:"No" None = Error "No");
       ]} *)
 
+  (** {2 Comparison and equality} *)
+  val compare : ('a -> 'a -> [ `Less | `Equal | `Greater ])
+    -> 'a t -> 'a t -> [ `Less | `Equal | `Greater ]
+  (** Comparison for option values. See {!val:Compat.compare} for the
+      integer-based implementation. *)
 
-  (** {2:implemented_interfaces Implemented Interfaces} *)
+  val equal : ('a -> 'a -> bool) -> 'a t -> 'a t -> bool
 
-  include Ordered1.Extension    with type 'a t := 'a t
-  include Equal1.Extension      with type 'a t := 'a t
-  include Monad.Extension       with type 'a t := 'a t
-  include Functor.Extension     with type 'a t := 'a t
-  include Applicative.Extension with type 'a t := 'a t
+  (** {2 Monad instance} *)
+
+  val return : 'a -> 'a t
+
+  val bind : ('a -> 'b t) -> 'a t -> 'b t
 
 
-  (* Functor *)
+  (** {2 Functor instance} *)
+
+  val map : ('a -> 'b) -> 'a t ->  'b t
   val ( <@> ) : ('a -> 'b) -> 'a t ->  'b t
-  (** [f <@> self] will apply [f] to the value wrapped by [self], returning an
-      option with the resulting value, or [None] if [self] does not not have any
-      value. This operator is an infix version of [map].
+  (** [map f self] will apply [f] to the value wrapped by [self], returning an
+      option with the resulting value, or [None] if [self] does not not have
+      any value. This operator is an infix version of [map].
+
+      {e Note:} [<@>] (read as "apply") is the infix version of [map].
 
       {3 Examples}
 
       {[
-      assert (List.reverse <@> Some [1; 2; 3] == Some [3; 2; 1]);
-      assert (Int.to_string <@> None == None);
+      assert (Option.map List.reverse (Some [1; 2; 3]) = Some [3; 2; 1]);
+      assert (Int.to_string <@> None = None);
       ]} *)
 
 
@@ -261,6 +267,10 @@ module Option : sig
       ]}
 
       @raise Failure if [self] is [None]. *)
+
+  module Compat : sig
+    val compare : ('a -> 'a -> int) -> 'a t -> 'a t -> int
+  end
 end
 
 (** {2:public_exports Public Definitions}
